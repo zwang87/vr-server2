@@ -14,6 +14,8 @@ import socket
 from io import BytesIO
 import time
 
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
 class XmlRelay(DatagramProtocol):
         def __init__(self):
                 self.updates = {}
@@ -56,12 +58,15 @@ class XmlRelay(DatagramProtocol):
                         self.rendered_xml = '<Updates modication_version="%i">%s</Updates>' % (self.modication_version, ''.join(updates_xml))
                         self.rendered_version = self.modication_version
                 for host, port in self.clients:
+                        sock.sendto(self.rendered_xml, (host, port))
+                        """
                         try:
                                 self.transport.write(self.rendered_xml, (host, port))
                         except socket.error as e:
                                 # The host does not need to exist
-                                if not (e.errno in [64, 65]):
+                                if not (e.errno in []):
                                         raise e
+                        """
 
 relay = XmlRelay()
 reactor.listenUDP(1610, relay, interface='192.168.1.3', maxPacketSize=65507)

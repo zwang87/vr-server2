@@ -10,7 +10,7 @@ class XmlRelay(DatagramProtocol):
         def __init__(self, _sc):
                 self.sc = _sc
                 self.sendXmlTimer = None
-                self.clients = [("192.168.1.2", 1610)]
+                self.clients = [("192.168.1.3", 1610)]
                 self.frame_data = None
 
         def datagramReceived(self, data, (in_host, in_port)):
@@ -33,6 +33,6 @@ class ServerConnection(DatagramProtocol):
  
 sc = ServerConnection()
 relay = XmlRelay(sc)
-reactor.listenUDP(0, sc, interface='192.168.1.11', maxPacketSize=65507)
-reactor.listenUDP(1609, relay, interface='127.0.0.1', maxPacketSize=65507)
+reactor.listenUDP(0, sc, interface='192.168.1.3', maxPacketSize=65507)
+reactor.listenUDP(1615, relay, interface='127.0.0.1', maxPacketSize=65507)
 reactor.run()
