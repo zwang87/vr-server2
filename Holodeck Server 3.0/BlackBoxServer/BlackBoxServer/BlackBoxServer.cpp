@@ -12,6 +12,9 @@ using namespace tinyxml2;
 
 int frameModificationVersion = 0;
 
+bool is_b1_active = false;
+bool is_b2_active = false;
+
 class UDPClient {
 	SOCKET s;
 	struct sockaddr_in clientAddress;
@@ -66,7 +69,7 @@ void SendXmlToClients(tinyxml2::XMLDocument *d) {
 	XMLPrinter printer;
 	d->Print(&printer);
 	for (auto const &it1 : clients) {
-		it1.second->send((char*)printer.CStr(), printer.CStrSize());
+		it1.second->send((char*)printer.CStr(), printer.CStrSize() - 1);
 	}
 }
 
@@ -290,7 +293,19 @@ int _tmain(int argc, _TCHAR* argv[])
 			else
 				printf("Error changing client connection type to Unicast.\n\n");
 			break;
+			// (HACK) page up: toggle button 1
+		case 'I':
+			is_b1_active ^= 1;
+			if (is_b1_active) printf("button 1 active\n");
+			else printf("button 1 inactive\n");
+			break;
+		case 'Q':
+			is_b2_active ^= 1;
+			if (is_b2_active) printf("button 2 active\n");
+			else printf("button 2 inactive\n");
+			break;
 		default:
+			printf("unrecognized keycode: %c", c);
 			break;
 		}
 		if (bExit) {
@@ -387,6 +402,8 @@ void SendFrameToClients(sFrameOfMocapData *data, void *pUserData)
 	root->SetAttribute("trackedModelsChanged", bTrackedModelsChanged);
 	root->SetAttribute("timestamp", data->fTimestamp);
 	root->SetAttribute("timecode", szTimecode);
+	root->SetAttribute("button1", is_b1_active);
+	root->SetAttribute("button2", is_b2_active);
 
 	XMLElement *d, *e, *f;
 	int i = 0;
