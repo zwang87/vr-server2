@@ -3,7 +3,7 @@ import struct
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
 sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-sock.bind(('127.0.0.1', 1610))
+sock.bind(('127.0.0.1', 1611))
 
 while True:
 	print sock.recv(60000)
