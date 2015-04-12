@@ -6,9 +6,16 @@ from lxml import etree
 import logging
 from io import BytesIO
 
-def milliseconds():
-	return time() * 1000
+# (Port 0 means to select an arbitrary unused port)
+# SENDING_IP should be the IP used by this server to send packets
+SENDING_IP = "127.0.0.1"
+SENDING_PORT = 0
+# RECV_HOST should be the IP used by this server to receive packets
+RECV_HOST = "127.0.0.1"
+RECV_PORT = 1610
+
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock.bind((SENDING_IP, SENDING_PORT))
 updates = {}
 modification_version = 0
 rendered_xml = ""
@@ -60,11 +67,7 @@ class ThreadedUDPServer(SocketServer.ThreadingMixIn, SocketServer.UDPServer):
 	pass
 
 if __name__ == "__main__":
-	# Port 0 means to select an arbitrary unused port
-	# Host should be the LAN IP of the server
-	HOST, PORT = "127.0.0.1", 1610
-
-	server = ThreadedUDPServer((HOST, PORT), ThreadedUDPRequestHandler)
+	server = ThreadedUDPServer((RECV_HOST, RECV_PORT), ThreadedUDPRequestHandler)
 	ip, port = server.server_address
 
 	# Start a thread with the server -- that thread will then start one
