@@ -15,6 +15,7 @@ RECV_IP = "127.0.0.1"
 RECV_PORT = 1610
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+#sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 sock.bind((SENDING_IP, SENDING_PORT))
 updates = {}
 modification_version = 0
