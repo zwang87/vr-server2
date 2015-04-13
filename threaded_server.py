@@ -65,6 +65,7 @@ class ThreadedUDPRequestHandler(SocketServer.BaseRequestHandler):
 		send_xml()
 
 class ThreadedUDPServer(SocketServer.ThreadingMixIn, SocketServer.UDPServer):
+	# TODO allow_reuse_address
 	pass
 
 if __name__ == "__main__":
