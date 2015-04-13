@@ -11,7 +11,7 @@ from io import BytesIO
 SENDING_IP = "127.0.0.1"
 SENDING_PORT = 0
 # RECV_HOST should be the IP used by this server to receive packets
-RECV_HOST = "127.0.0.1"
+RECV_IP = "127.0.0.1"
 RECV_PORT = 1610
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
