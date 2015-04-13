@@ -8,11 +8,11 @@ SENDING_IP = "127.0.0.1"
 SENDING_PORT = 0
 # RECV_HOST should be the IP used by this server to receive packets
 RECV_IP = "127.0.0.1"
-RECV_PORT = 1610
+RECV_PORT = 1609
 
 """ DESTINATION CONFIGURATION """
 DEST_IP = "127.0.0.1"
-DEST_PORT = 1611
+DEST_PORT = 1610
 
 send = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 send.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
