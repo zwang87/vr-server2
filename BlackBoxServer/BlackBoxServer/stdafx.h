@@ -20,9 +20,23 @@
 #include <ctype.h>
 #include <stddef.h>
 
-#include "tinyxml2/tinyxml2.h"
+#define INTERNAL_SUPPRESS_PROTOBUF_FIELD_DEPRECATION
+#include "update_protocol.pb.h"
+
+#include <algorithm>
+
+#include <google/protobuf/stubs/common.h>
+#include <google/protobuf/stubs/once.h>
+#include <google/protobuf/io/coded_stream.h>
+#include <google/protobuf/wire_format_lite_inl.h>
+#include <google/protobuf/descriptor.h>
+#include <google/protobuf/generated_message_reflection.h>
+#include <google/protobuf/reflection_ops.h>
+#include <google/protobuf/wire_format.h>
 
 #include "../Include/NatNetTypes.h"
 #include "../Include/NatNetClient.h"
+
+#include "update_protocol.pb.h"
 
 // TODO: reference additional headers your program requires here

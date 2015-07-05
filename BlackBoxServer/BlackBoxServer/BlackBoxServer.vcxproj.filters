@@ -36,8 +36,8 @@
     <ClInclude Include="..\Include\NatNetClient.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="tinyxml2\tinyxml2.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="update_protocol.pb.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -47,7 +47,7 @@
     <ClCompile Include="BlackBoxServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="tinyxml2\tinyxml2.cpp">
+    <ClCompile Include="update_protocol.pb.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
