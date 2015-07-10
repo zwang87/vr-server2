@@ -346,12 +346,17 @@ class Wheel : public ::google::protobuf::Message {
 
   // accessors -------------------------------------------------------
 
-  // required int32 id = 1;
+  // required string id = 1;
   bool has_id() const;
   void clear_id();
   static const int kIdFieldNumber = 1;
-  ::google::protobuf::int32 id() const;
-  void set_id(::google::protobuf::int32 value);
+  const ::std::string& id() const;
+  void set_id(const ::std::string& value);
+  void set_id(const char* value);
+  void set_id(const char* value, size_t size);
+  ::std::string* mutable_id();
+  ::std::string* release_id();
+  void set_allocated_id(::std::string* id);
 
   // required string direction = 2;
   bool has_direction() const;
@@ -387,8 +392,8 @@ class Wheel : public ::google::protobuf::Message {
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::uint32 _has_bits_[1];
   mutable int _cached_size_;
+  ::google::protobuf::internal::ArenaStringPtr id_;
   ::google::protobuf::internal::ArenaStringPtr direction_;
-  ::google::protobuf::int32 id_;
   ::google::protobuf::int32 tick_;
   friend void  protobuf_AddDesc_update_5fprotocol_2eproto();
   friend void protobuf_AssignDesc_update_5fprotocol_2eproto();
@@ -463,12 +468,17 @@ class Button : public ::google::protobuf::Message {
 
   // accessors -------------------------------------------------------
 
-  // required int32 id = 1;
+  // required string id = 1;
   bool has_id() const;
   void clear_id();
   static const int kIdFieldNumber = 1;
-  ::google::protobuf::int32 id() const;
-  void set_id(::google::protobuf::int32 value);
+  const ::std::string& id() const;
+  void set_id(const ::std::string& value);
+  void set_id(const char* value);
+  void set_id(const char* value, size_t size);
+  ::std::string* mutable_id();
+  ::std::string* release_id();
+  void set_allocated_id(::std::string* id);
 
   // required string state = 2;
   bool has_state() const;
@@ -495,8 +505,8 @@ class Button : public ::google::protobuf::Message {
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::uint32 _has_bits_[1];
   mutable int _cached_size_;
+  ::google::protobuf::internal::ArenaStringPtr id_;
   ::google::protobuf::internal::ArenaStringPtr state_;
-  ::google::protobuf::int32 id_;
   friend void  protobuf_AddDesc_update_5fprotocol_2eproto();
   friend void protobuf_AssignDesc_update_5fprotocol_2eproto();
   friend void protobuf_ShutdownFile_update_5fprotocol_2eproto();
@@ -570,12 +580,17 @@ class Mouse : public ::google::protobuf::Message {
 
   // accessors -------------------------------------------------------
 
-  // required int32 id = 1;
+  // required string id = 1;
   bool has_id() const;
   void clear_id();
   static const int kIdFieldNumber = 1;
-  ::google::protobuf::int32 id() const;
-  void set_id(::google::protobuf::int32 value);
+  const ::std::string& id() const;
+  void set_id(const ::std::string& value);
+  void set_id(const char* value);
+  void set_id(const char* value, size_t size);
+  ::std::string* mutable_id();
+  ::std::string* release_id();
+  void set_allocated_id(::std::string* id);
 
   // required bool connected = 2;
   bool has_connected() const;
@@ -635,11 +650,11 @@ class Mouse : public ::google::protobuf::Message {
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::uint32 _has_bits_[1];
   mutable int _cached_size_;
-  ::google::protobuf::int32 id_;
-  bool connected_;
+  ::google::protobuf::internal::ArenaStringPtr id_;
   ::google::protobuf::internal::ArenaStringPtr name_;
   ::google::protobuf::RepeatedPtrField< ::Button > buttons_;
   ::google::protobuf::RepeatedPtrField< ::Wheel > wheels_;
+  bool connected_;
   friend void  protobuf_AddDesc_update_5fprotocol_2eproto();
   friend void protobuf_AssignDesc_update_5fprotocol_2eproto();
   friend void protobuf_ShutdownFile_update_5fprotocol_2eproto();
@@ -1653,7 +1668,7 @@ inline void Rotation::set_w(double value) {
 
 // Wheel
 
-// required int32 id = 1;
+// required string id = 1;
 inline bool Wheel::has_id() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
@@ -1664,17 +1679,46 @@ inline void Wheel::clear_has_id() {
   _has_bits_[0] &= ~0x00000001u;
 }
 inline void Wheel::clear_id() {
-  id_ = 0;
+  id_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   clear_has_id();
 }
-inline ::google::protobuf::int32 Wheel::id() const {
+inline const ::std::string& Wheel::id() const {
   // @@protoc_insertion_point(field_get:Wheel.id)
-  return id_;
+  return id_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void Wheel::set_id(::google::protobuf::int32 value) {
+inline void Wheel::set_id(const ::std::string& value) {
   set_has_id();
-  id_ = value;
+  id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
   // @@protoc_insertion_point(field_set:Wheel.id)
+}
+inline void Wheel::set_id(const char* value) {
+  set_has_id();
+  id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Wheel.id)
+}
+inline void Wheel::set_id(const char* value, size_t size) {
+  set_has_id();
+  id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Wheel.id)
+}
+inline ::std::string* Wheel::mutable_id() {
+  set_has_id();
+  // @@protoc_insertion_point(field_mutable:Wheel.id)
+  return id_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Wheel::release_id() {
+  clear_has_id();
+  return id_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Wheel::set_allocated_id(::std::string* id) {
+  if (id != NULL) {
+    set_has_id();
+  } else {
+    clear_has_id();
+  }
+  id_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), id);
+  // @@protoc_insertion_point(field_set_allocated:Wheel.id)
 }
 
 // required string direction = 2;
@@ -1758,7 +1802,7 @@ inline void Wheel::set_tick(::google::protobuf::int32 value) {
 
 // Button
 
-// required int32 id = 1;
+// required string id = 1;
 inline bool Button::has_id() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
@@ -1769,17 +1813,46 @@ inline void Button::clear_has_id() {
   _has_bits_[0] &= ~0x00000001u;
 }
 inline void Button::clear_id() {
-  id_ = 0;
+  id_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   clear_has_id();
 }
-inline ::google::protobuf::int32 Button::id() const {
+inline const ::std::string& Button::id() const {
   // @@protoc_insertion_point(field_get:Button.id)
-  return id_;
+  return id_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void Button::set_id(::google::protobuf::int32 value) {
+inline void Button::set_id(const ::std::string& value) {
   set_has_id();
-  id_ = value;
+  id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
   // @@protoc_insertion_point(field_set:Button.id)
+}
+inline void Button::set_id(const char* value) {
+  set_has_id();
+  id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Button.id)
+}
+inline void Button::set_id(const char* value, size_t size) {
+  set_has_id();
+  id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Button.id)
+}
+inline ::std::string* Button::mutable_id() {
+  set_has_id();
+  // @@protoc_insertion_point(field_mutable:Button.id)
+  return id_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Button::release_id() {
+  clear_has_id();
+  return id_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Button::set_allocated_id(::std::string* id) {
+  if (id != NULL) {
+    set_has_id();
+  } else {
+    clear_has_id();
+  }
+  id_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), id);
+  // @@protoc_insertion_point(field_set_allocated:Button.id)
 }
 
 // required string state = 2;
@@ -1839,7 +1912,7 @@ inline void Button::set_allocated_state(::std::string* state) {
 
 // Mouse
 
-// required int32 id = 1;
+// required string id = 1;
 inline bool Mouse::has_id() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
@@ -1850,17 +1923,46 @@ inline void Mouse::clear_has_id() {
   _has_bits_[0] &= ~0x00000001u;
 }
 inline void Mouse::clear_id() {
-  id_ = 0;
+  id_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   clear_has_id();
 }
-inline ::google::protobuf::int32 Mouse::id() const {
+inline const ::std::string& Mouse::id() const {
   // @@protoc_insertion_point(field_get:Mouse.id)
-  return id_;
+  return id_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void Mouse::set_id(::google::protobuf::int32 value) {
+inline void Mouse::set_id(const ::std::string& value) {
   set_has_id();
-  id_ = value;
+  id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
   // @@protoc_insertion_point(field_set:Mouse.id)
+}
+inline void Mouse::set_id(const char* value) {
+  set_has_id();
+  id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Mouse.id)
+}
+inline void Mouse::set_id(const char* value, size_t size) {
+  set_has_id();
+  id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Mouse.id)
+}
+inline ::std::string* Mouse::mutable_id() {
+  set_has_id();
+  // @@protoc_insertion_point(field_mutable:Mouse.id)
+  return id_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Mouse::release_id() {
+  clear_has_id();
+  return id_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Mouse::set_allocated_id(::std::string* id) {
+  if (id != NULL) {
+    set_has_id();
+  } else {
+    clear_has_id();
+  }
+  id_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), id);
+  // @@protoc_insertion_point(field_set_allocated:Mouse.id)
 }
 
 // required bool connected = 2;

@@ -9,8 +9,8 @@ using namespace std;
 
 int frameModificationVersion = 0;
 
-bool is_b1_active = false;
-bool is_b2_active = false;
+map<string, vector<string> > mice_buttons;
+bool update_mice;
 
 #define VRSERVER_PORT 1611
 class MulticastStream {
@@ -41,12 +41,12 @@ class MulticastStream {
 		// Bind to correct NIC
 		bind_addr.sin_family = AF_INET;
 		// bind_addr.sin_addr.s_addr = inet_addr(INADDR_ANY);
-		err = inet_pton(AF_INET, "192.168.1.4", &bind_addr.sin_addr); // S_ADDR of our IP for the WiFi interface
+		err = inet_pton(AF_INET, "192.168.1.27", &bind_addr.sin_addr); // S_ADDR of our IP for the WiFi interface
 		if (err == SOCKET_ERROR) {
 			exit(0);
 		}
 		bind_addr.sin_port = 0;
-		err = bind(s, (struct sockaddr *)&bind_addr, sizeof(bind_addr));
+		err = ::bind(s, (struct sockaddr *)&bind_addr, sizeof(bind_addr));
 		if (err == SOCKET_ERROR) {
 			exit(0);
 		}
@@ -79,6 +79,7 @@ void __cdecl DataHandler(sFrameOfMocapData* data, void* pUserData);
 void __cdecl MessageHandler(int msgType, char* msg);
 void resetClient();
 int CreateClient(int iConnectionType);
+int MouseHandler();
 
 unsigned int MyServersDataPort = 1511;
 unsigned int MyServersCommandPort = 1510;
@@ -126,6 +127,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	GOOGLE_PROTOBUF_VERIFY_VERSION;
 	Update update;
 
+	update_mice = true;
+	mice_buttons = map<string, vector<string> >();
+
+	thread mice_handler_thread(MouseHandler);
+
 	int iResult;
 	int iConnectionType = ConnectionType_Multicast; // ConnectionType_Unicast;
 
@@ -151,7 +157,6 @@ int _tmain(int argc, _TCHAR* argv[])
 		printf("[SampleClient] Received: %s", (char*)response);
 	}
 	GetDataDescriptions();
-
 
 	printf("\nClient is connected to server and listening for data...\n");
 	int c;
@@ -209,17 +214,6 @@ int _tmain(int argc, _TCHAR* argv[])
 			else
 				printf("Error changing client connection type to Unicast.\n\n");
 			break;
-			// (HACK) page up: toggle button 1
-		case 'I':
-			is_b1_active ^= 1;
-			if (is_b1_active) printf("button 1 active\n");
-			else printf("button 1 inactive\n");
-			break;
-		case 'Q':
-			is_b2_active ^= 1;
-			if (is_b2_active) printf("button 2 active\n");
-			else printf("button 2 inactive\n");
-			break;
 		default:
 			printf("unrecognized keycode: %c", c);
 			break;
@@ -235,6 +229,84 @@ int _tmain(int argc, _TCHAR* argv[])
 	theClient->Uninitialize();
 
 	return ErrorCode_OK;
+}
+
+int MouseHandler() {
+	int mouse_status = ManyMouse_Init();
+	if (mouse_status >= 0) {
+		printf("ManyMouse Init succeeded; %d mice found.\n", mouse_status);
+	}
+	else {
+		printf("ManyMouse Init failed.\n");
+		ManyMouse_Quit();
+		return 1;
+	}
+	ManyMouseEvent e;
+	while (update_mice) {
+		while (ManyMouse_PollEvent(&e))
+		{
+			switch (e.type) {
+			case MANYMOUSE_EVENT_RELMOTION:
+				//printf("Mouse #%u: relative motion %s %d\n", event.device,
+				//        event.item == 0 ? "X" : "Y", event.value);
+				// fflush(stdout);
+				break;
+
+			case MANYMOUSE_EVENT_ABSMOTION:
+				//printf("Mouse #%u: absolute motion %s %d\n", event.device,
+				//        event.item == 0 ? "X" : "Y", event.value);
+				// fflush(stdout);
+				break;
+
+			case MANYMOUSE_EVENT_BUTTON:
+
+				printf("mouse:%u:button:%u:%s\n", e.device,
+					e.item, e.value ? "down" : "up");
+				if (mice_buttons.count(to_string(e.device)) > 0) {
+					if (e.item < 2) {
+						mice_buttons[to_string(e.device)][e.item] = e.value ? "down" : "up";
+					}
+				}
+				else {
+					mice_buttons[to_string(e.device)] = vector<string>();
+					mice_buttons[to_string(e.device)].push_back(e.item == 0 ? (e.value ? "down" : "up") : "up");
+					mice_buttons[to_string(e.device)].push_back(e.item == 1 ? (e.value ? "down" : "up") : "up");
+				}
+				fflush(stdout);
+				break;
+
+			case MANYMOUSE_EVENT_SCROLL:
+				const char *wheel;
+				const char *direction;
+				if (e.item == 0) {
+					wheel = "vertical";
+					direction = ((e.value > 0) ? "up" : "down");
+				}
+				else {
+					wheel = "horizontal";
+					direction = ((e.value > 0) ? "right" : "left");
+				}
+				//printf("mouse:%u:wheel:%s:%s\n", e.device,
+				//	wheel, direction);
+				fflush(stdout);
+				break;
+
+			case MANYMOUSE_EVENT_DISCONNECT:
+				printf("mouse:%u:disconnected\n", e.device);
+				fflush(stdout);
+				break;
+
+			default:
+				printf("debug:Mouse #%u: unhandled event type %d\n", e.device,
+					e.type);
+				fflush(stdout);
+				break;
+			}
+		}
+	}
+	printf("Stopping Mouse Handler\n");
+	ManyMouse_Quit();
+	return 0;
 }
 
 // Establish a NatNet Client connection
@@ -347,6 +419,28 @@ void SendFrameToClients(sFrameOfMocapData *data, void *pUserData)
 	}
 
 	mocap_update->set_allocated_mocap(mocap);
+
+	
+	Update *mice_update = updates->add_updates();
+	mice_update->set_id("mice");
+	mice_update->set_mod_version(frameModificationVersion);
+	mice_update->set_time(data->fTimestamp);
+	for (auto &it : mice_buttons) {
+		string label = it.first;
+		string b0_val = it.second[0];
+		string b1_val = it.second[1];
+		Mouse *m = mice_update->add_mice();
+		m->set_id(label);
+		m->set_connected(true);
+		m->set_name("");
+		Button *b0 = m->add_buttons();
+		b0->set_id("0");
+		b0->set_state(b0_val);
+		Button *b1 = m->add_buttons();
+		b1->set_id("1");
+		b1->set_state(b1_val);
+	}
+	
 	updates->SerializeToArray(packet, sizeof(packet));
 	// TODO: Skeletons and Labeled  (non-body) Markers
 

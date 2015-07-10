@@ -19,9 +19,12 @@
 #include <list>
 #include <ctype.h>
 #include <stddef.h>
+#include <thread>
 
 #define INTERNAL_SUPPRESS_PROTOBUF_FIELD_DEPRECATION
 #include "update_protocol.pb.h"
+
+#include "manymouse.h"
 
 #include <algorithm>
 
