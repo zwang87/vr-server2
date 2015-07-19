@@ -10,6 +10,8 @@ using namespace std;
 int frameModificationVersion = 0;
 
 map<string, vector<string> > mice_buttons;
+map<unsigned int, string> mice_ids_to_labels;
+bool mice_remap_active;
 bool update_mice;
 
 #define VRSERVER_PORT 1611
@@ -41,7 +43,7 @@ class MulticastStream {
 		// Bind to correct NIC
 		bind_addr.sin_family = AF_INET;
 		// bind_addr.sin_addr.s_addr = inet_addr(INADDR_ANY);
-		err = inet_pton(AF_INET, "192.168.1.27", &bind_addr.sin_addr); // S_ADDR of our IP for the WiFi interface
+		err = inet_pton(AF_INET, "192.168.1.44", &bind_addr.sin_addr); // S_ADDR of our IP for the WiFi interface
 		if (err == SOCKET_ERROR) {
 			exit(0);
 		}
@@ -129,6 +131,8 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	update_mice = true;
 	mice_buttons = map<string, vector<string> >();
+	mice_ids_to_labels = map<unsigned int, string>();
+	mice_remap_active = false;
 
 	thread mice_handler_thread(MouseHandler);
 
@@ -172,7 +176,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		switch (c)
 		{
 		case 'h':
-			printf("\nc: client connections\nr: reset\nq: quit\np: print server info\nd: refresh data descriptions\nf: print out most recent mocap frame ID\nm: multicast\nu: unicast");
+			printf("\nc: client connections\nr: reset\nq: quit\np: print server info\nd: refresh data descriptions\nf: print out most recent mocap frame ID\nm: multicast\nu: unicast\nz: map mice");
 			break;
 		case 'q':
 			bExit = true;
@@ -213,6 +217,17 @@ int _tmain(int argc, _TCHAR* argv[])
 				printf("Client connection type changed to Unicast.\n\n");
 			else
 				printf("Error changing client connection type to Unicast.\n\n");
+			break;
+		case 'z':
+			if (mice_remap_active) {
+				printf("Done remapping mice.\n");
+				mice_remap_active = false;
+			}
+			else {
+				printf("Click the mice in the order you want them to be assigned.\n");
+				mice_remap_active = true;
+				mice_ids_to_labels = map<unsigned int, string>();
+			}
 			break;
 		default:
 			printf("unrecognized keycode: %c", c);
@@ -271,6 +286,15 @@ int MouseHandler() {
 					mice_buttons[to_string(e.device)] = vector<string>();
 					mice_buttons[to_string(e.device)].push_back(e.item == 0 ? (e.value ? "down" : "up") : "up");
 					mice_buttons[to_string(e.device)].push_back(e.item == 1 ? (e.value ? "down" : "up") : "up");
+				}
+				if (mice_remap_active && !e.value) {
+					if (mice_ids_to_labels.count(e.device) == 0) {
+						string label = "VR" + to_string(mice_ids_to_labels.size()) + "_wand";
+						mice_ids_to_labels[e.device] = label;
+						printf("assigned label %s to mouse %u\n", label.c_str(), e.device);
+					} else {
+						printf("there already exists a label (%s) for this mouse (%u)!\n", mice_ids_to_labels[e.device].c_str(), e.device);
+					}
 				}
 				fflush(stdout);
 				break;
@@ -381,7 +405,7 @@ void SendFrameToClients(sFrameOfMocapData *data, void *pUserData)
 	Update* mocap_update = updates->add_updates();
 	mocap_update->set_id("mocap");
 	mocap_update->set_mod_version(frameModificationVersion);
-	mocap_update->set_time(data->fTimestamp);
+	mocap_update->set_time(data->fTimestamp * 1000);
 	int body_id = 0;
 	Mocap* mocap = new Mocap();
 	mocap->set_duringrecording(bIsRecording);
@@ -424,21 +448,23 @@ void SendFrameToClients(sFrameOfMocapData *data, void *pUserData)
 	Update *mice_update = updates->add_updates();
 	mice_update->set_id("mice");
 	mice_update->set_mod_version(frameModificationVersion);
-	mice_update->set_time(data->fTimestamp);
+	mice_update->set_time(data->fTimestamp * 1000);
 	for (auto &it : mice_buttons) {
-		string label = it.first;
-		string b0_val = it.second[0];
-		string b1_val = it.second[1];
-		Mouse *m = mice_update->add_mice();
-		m->set_id(label);
-		m->set_connected(true);
-		m->set_name("");
-		Button *b0 = m->add_buttons();
-		b0->set_id("0");
-		b0->set_state(b0_val);
-		Button *b1 = m->add_buttons();
-		b1->set_id("1");
-		b1->set_state(b1_val);
+		if (mice_ids_to_labels.count(atoi(it.first.c_str())) == 1) {
+			string label = mice_ids_to_labels[atoi(it.first.c_str())];
+			string b0_val = it.second[0];
+			string b1_val = it.second[1];
+			Mouse *m = mice_update->add_mice();
+			m->set_id(label);
+			m->set_connected(true);
+			m->set_name("");
+			Button *b0 = m->add_buttons();
+			b0->set_id("0");
+			b0->set_state(b0_val);
+			Button *b1 = m->add_buttons();
+			b1->set_id("1");
+			b1->set_state(b1_val);
+		}
 	}
 	
 	updates->SerializeToArray(packet, sizeof(packet));
