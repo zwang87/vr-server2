@@ -1,4 +1,4 @@
-﻿Build started 7/18/2015 7:58:48 PM.
+﻿Build started 10/12/2015 5:36:06 PM.
      1>Project "C:\Users\Media\Desktop\vr-server2\BlackBoxServer\BlackBoxServer\BlackBoxServer.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64\CL.exe /c /I"C:\Users\Media\Desktop\vr-server2\BlackBoxServer\Include" /Zi /nologo /W3 /WX- /sdl /Od /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Debug\\" /Fd"x64\Debug\vc120.pdb" /Gd /TP /errorReport:prompt -D_SCL_SECURE_NO_WARNINGS
@@ -11,9 +11,10 @@
      1>C:\Users\Media\Desktop\vr-server2\BlackBoxServer\Include\google/protobuf/wire_format_lite_inl.h(838): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
      1>C:\Users\Media\Desktop\vr-server2\BlackBoxServer\Include\google/protobuf/wire_format_lite_inl.h(841): warning C4267: 'argument' : conversion from 'size_t' to 'google::protobuf::uint32', possible loss of data
      1>C:\Users\Media\Desktop\vr-server2\BlackBoxServer\Include\google/protobuf/wire_format_lite_inl.h(842): warning C4267: 'return' : conversion from 'size_t' to 'int', possible loss of data
-     1>BlackBoxServer.cpp(393): warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
-     1>BlackBoxServer.cpp(408): warning C4244: 'argument' : conversion from 'double' to 'google::protobuf::int32', possible loss of data
-     1>BlackBoxServer.cpp(451): warning C4244: 'argument' : conversion from 'double' to 'google::protobuf::int32', possible loss of data
+     1>BlackBoxServer.cpp(302): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+     1>BlackBoxServer.cpp(406): warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+     1>BlackBoxServer.cpp(407): warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+     1>BlackBoxServer.cpp(414): warning C4018: '<' : signed/unsigned mismatch
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Media\Desktop\vr-server2\BlackBoxServer\x64\Debug\BlackBoxServer.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Users\Media\Desktop\vr-server2\BlackBoxServer\Libraries" libprotobuf.lib ws2_32.lib NatNetLibStatic64.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Media\Desktop\vr-server2\BlackBoxServer\x64\Debug\BlackBoxServer.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Media\Desktop\vr-server2\BlackBoxServer\x64\Debug\BlackBoxServer.lib" /MACHINE:X64 x64\Debug\linux_evdev.obj
          x64\Debug\macosx_hidmanager.obj
@@ -24,9 +25,10 @@
          x64\Debug\manymouse.obj
          x64\Debug\stdafx.obj
          x64\Debug\update_protocol.pb.obj
+         x64\Debug\wiimote.obj
          BlackBoxServer.vcxproj -> C:\Users\Media\Desktop\vr-server2\BlackBoxServer\x64\Debug\BlackBoxServer.exe
      1>Done Building Project "C:\Users\Media\Desktop\vr-server2\BlackBoxServer\BlackBoxServer\BlackBoxServer.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:02.06
+Time Elapsed 00:00:01.73

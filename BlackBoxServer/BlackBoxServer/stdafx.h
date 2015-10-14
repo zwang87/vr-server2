@@ -20,6 +20,9 @@
 #include <ctype.h>
 #include <stddef.h>
 #include <thread>
+#include <inttypes.h>
+#include <vector>
+#include <mutex>
 
 #define INTERNAL_SUPPRESS_PROTOBUF_FIELD_DEPRECATION
 #include "update_protocol.pb.h"
@@ -36,9 +39,11 @@
 #include <google/protobuf/generated_message_reflection.h>
 #include <google/protobuf/reflection_ops.h>
 #include <google/protobuf/wire_format.h>
-
+#include <google/protobuf/arena.h>
 #include "../Include/NatNetTypes.h"
 #include "../Include/NatNetClient.h"
+
+#include "wiimote.h"
 
 #include "update_protocol.pb.h"
 
