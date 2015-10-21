@@ -256,6 +256,9 @@ public:
 		packet_groups_lock.lock();
 		// Get the current packet of the packet group
 		Update *packet = head->getNextPacketToSend();
+		if (packet->id() == "") {
+			packet->set_id("motive");
+		}
 		// Check for wiimotes in this packet and update them
 		google::protobuf::RepeatedPtrField<Mote>::iterator motes_iterator = packet->mutable_motes()->begin();
 		while (motes_iterator != packet->mutable_motes()->end()) {
@@ -274,7 +277,7 @@ public:
 		// Fill the buffer
 		assert(packet->ByteSize() < max_packet_bytes);
 		packet->SerializePartialToArray(buffer, max_packet_bytes);
-		//std::cout << "sending packet of type: " << packet->id() << std::endl;
+		// std::cout << "sending packet of type: " << packet->id() << std::endl;
 		// Send the buffer
 		multicast_stream.send(buffer, packet->ByteSize());
 
