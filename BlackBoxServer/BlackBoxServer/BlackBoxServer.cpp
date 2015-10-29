@@ -26,13 +26,12 @@ char *mote_id_to_label(QWORD id) {
 wiimote  *motes[7] = { NULL };
 unsigned detected = 0;
 
-class MulticastStream {
-	const static int server_port = 1611;
+class Stream {
 	SOCKET s;
 	struct sockaddr_in addr;
 	struct sockaddr_in bind_addr;
 	public:
-	MulticastStream() {
+	Stream(PCSTR ip, int server_port, bool multicast) {
 		WSADATA wd;
 		WSAStartup(0x02, &wd);
 		int err;
@@ -41,9 +40,11 @@ class MulticastStream {
 		}
 
 		int opt_val = 1;
-		err = setsockopt(s, SOL_SOCKET, SO_BROADCAST, (char*)&opt_val, sizeof(opt_val));
-		if (err == SOCKET_ERROR) {
-			exit(0);
+		if (multicast) {
+			err = setsockopt(s, SOL_SOCKET, SO_BROADCAST, (char*)&opt_val, sizeof(opt_val));
+			if (err == SOCKET_ERROR) {
+				exit(0);
+			}
 		}
 
 		opt_val = 1;
@@ -69,7 +70,7 @@ class MulticastStream {
 		addr.sin_family = AF_INET;
 		addr.sin_port = htons(server_port);
 		// Proper mutlicast group
-		err = inet_pton(AF_INET, "224.1.1.1", &addr.sin_addr);
+		err = inet_pton(AF_INET, ip, &addr.sin_addr);
 		if (err == SOCKET_ERROR) {
 			exit(0);
 		}
@@ -77,7 +78,7 @@ class MulticastStream {
 	void send(char* packet, int length) {
 		sendto(s, packet, length, 0, (struct sockaddr*) &addr, sizeof(addr));
 	}
-	~MulticastStream() {
+	~Stream() {
 		closesocket(s);
 		WSACleanup();
 	}
@@ -138,7 +139,8 @@ private:
 	static PacketGroup *head;
 	static std::mutex packet_groups_lock;
 	static char buffer[max_packet_bytes];
-	static MulticastStream multicast_stream;
+	static Stream multicast_stream;
+	static Stream unicast_stream;
 
 	// This static field should only be accessed by PacketGroup instances
 	// It should not be accessed by the static class, multiple threads,
@@ -280,6 +282,7 @@ public:
 		// std::cout << "sending packet of type: " << packet->id() << std::endl;
 		// Send the buffer
 		multicast_stream.send(buffer, packet->ByteSize());
+		unicast_stream.send(buffer, packet->ByteSize());
 
 		packet_groups_lock.unlock();
 	}
@@ -316,7 +319,9 @@ vector<PacketGroup * > PacketGroup::packet_groups = vector<PacketGroup * >();
 PacketGroup * PacketGroup::head = NULL;
 std::mutex PacketGroup::packet_groups_lock;
 char PacketGroup::buffer[PacketGroup::max_packet_bytes];
-MulticastStream PacketGroup::multicast_stream = MulticastStream();
+Stream PacketGroup::multicast_stream = Stream("224.1.1.1", 1611, true);
+Stream PacketGroup::unicast_stream = Stream("192.168.1.11", 1612, false);
+
 int PacketGroup::mod_version = 0;
 
 int PacketServingThread() {
@@ -377,7 +382,7 @@ int PacketReceivingThread() {
 	}
 	
 	while (true) {
-		// printf("listening for packet\n");
+		//printf("listening for packet\n");
 		//int recv_status = recv(s, buf, len, flags);
 		int addr_len = sizeof(addr);
 		int recv_status = recvfrom(soc, buf, len, flags, (sockaddr*)&from_addr, &addr_len);
@@ -385,7 +390,7 @@ int PacketReceivingThread() {
 			std::cout << "Error in Receiving: " << WSAGetLastError() << std::endl;
 		}
 		
-		// printf("%d bytes received\n", recv_status);
+		//printf("%d bytes received\n", recv_status);
 		
 		Update *update = new Update();
 		viveUpdateLock.lock();
